@@ -1,0 +1,32 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+    <changeSet author="skel1 (generated)" id="1715539559531-1">
+        <createTable tableName="categoria">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="descrizione" type="VARCHAR(255)"/>
+            <column name="nome" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="skel1 (generated)" id="1715539559531-2">
+        <createTable tableName="prodotto">
+            <column autoIncrement="true" name="id" type="INT">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="descrizione" type="VARCHAR(255)"/>
+            <column name="nome" type="VARCHAR(255)"/>
+            <column name="prezzo" type="DOUBLE"/>
+            <column name="quantita" type="INT"/>
+            <column name="categoria_id" type="INT"/>
+        </createTable>
+    </changeSet>
+    <changeSet author="skel1 (generated)" id="1715539559531-3">
+        <createIndex associatedWith="" indexName="FKp54y50a2i7pdiipduc60tttrw" tableName="prodotto">
+            <column name="categoria_id"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="skel1 (generated)" id="1715539559531-4">
+        <addForeignKeyConstraint baseColumnNames="categoria_id" baseTableName="prodotto" constraintName="FKp54y50a2i7pdiipduc60tttrw" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="categoria" validate="true"/>
+    </changeSet>
+</databaseChangeLog>
