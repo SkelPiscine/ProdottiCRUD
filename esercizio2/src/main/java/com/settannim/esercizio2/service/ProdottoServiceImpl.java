@@ -1,7 +1,9 @@
 package com.settannim.esercizio2.service;
 
+import com.settannim.esercizio2.entity.Categoria;
 import com.settannim.esercizio2.entity.Prodotto;
 import com.settannim.esercizio2.mapper.ProdottoMapper;
+import com.settannim.esercizio2.model.CategoriaDTO;
 import com.settannim.esercizio2.model.ProdottoDTO;
 import com.settannim.esercizio2.repository.ProdottoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,38 +24,34 @@ public class ProdottoServiceImpl implements ProdottoService{
         prodottoMapper = theProdottoMapper;
     }
 
-    @Override
-    public List<Prodotto> findAll() {
-        return prodottoRepository.findAll();
-    }
 
     @Override
-    public Prodotto findById(int theId) {
-        Optional<Prodotto> result = prodottoRepository.findById(theId);
-        Prodotto theProdotto = null;
-
-        if (result.isPresent()){
-            theProdotto = result.get();
+    public ProdottoDTO findById(int theId) throws Exception {
+        Optional<Prodotto> prodottoTemp = prodottoRepository.findById(theId);
+        if (prodottoTemp.isEmpty()) {
+            throw new Exception("Product not found by id: " + theId);
         }
-        else{
-            //se non trova nessuna corrispondenza con theId
-            throw new RuntimeException("non ho trovato il prodotto con ID " + theId);
+        return prodottoMapper.toDTO(prodottoTemp.get());
+    }
+
+
+    @Override
+    public ProdottoDTO save(ProdottoDTO prodottoDTO) throws Exception {
+        Optional<Prodotto> tempProduct = prodottoRepository.findByNome(prodottoDTO.getNome());
+        if(tempProduct.isPresent()){
+            throw new Exception("Product already existing");
         }
-        return theProdotto;
-    }
-
-    public ProdottoDTO findDTOById(int theId) throws Exception {
-        Prodotto prodotto = prodottoRepository.findById(theId).orElseThrow();
-        return prodottoMapper.prodottoToProdottoDTO(prodotto);
+        Prodotto newProduct = prodottoMapper.toEntity(prodottoDTO);
+        newProduct = prodottoRepository.save(newProduct);
+        return prodottoMapper.toDTO(newProduct);
     }
 
     @Override
-    public Prodotto save(Prodotto theProdotto) {
-        return prodottoRepository.save(theProdotto);
-    }
-
-    @Override
-    public void deleteById(int theId) {
+    public void deleteById(int theId) throws Exception {
+        Optional<Prodotto> prodotto = prodottoRepository.findById(theId);
+        if(prodotto.isEmpty()){
+            throw new Exception("product not found");
+        }
         prodottoRepository.deleteById(theId);
     }
 }

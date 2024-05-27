@@ -6,9 +6,7 @@ import com.settannim.esercizio2.model.ProdottoDTO;
 import java.util.List;
 
 public interface ProdottoService {
-    List<Prodotto> findAll();
-    Prodotto findById(int theId);
-    ProdottoDTO findDTOById(int theID) throws Exception;
-    Prodotto save(Prodotto theProdotto);
-    void deleteById(int theId);
+    ProdottoDTO findById(int theId) throws Exception;
+    ProdottoDTO save(ProdottoDTO theProdotto) throws Exception;
+    void deleteById(int theId) throws Exception;
 }

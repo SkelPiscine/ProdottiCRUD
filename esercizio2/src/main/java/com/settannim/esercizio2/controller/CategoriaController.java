@@ -1,59 +1,74 @@
 package com.settannim.esercizio2.controller;
 
 import com.settannim.esercizio2.entity.Categoria;
+import com.settannim.esercizio2.model.CategoriaDTO;
+import com.settannim.esercizio2.model.ProdottoDTO;
 import com.settannim.esercizio2.service.CategoriaService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/categorie")
 public class CategoriaController {
-    private CategoriaService categoriaService;
+    private final CategoriaService categoriaService;
 
-    @Autowired
-    public CategoriaController(CategoriaService categoriaService) {
-        this.categoriaService = categoriaService;
-    }
-
-    @GetMapping
-    public List<Categoria> findAll() {
-        return categoriaService.findAll();
-    }
 
     @GetMapping("/{categoriaId}")
-    public Categoria getCategoria(@PathVariable int categoriaId) {
-        Categoria theCategoria = categoriaService.findById(categoriaId);
-        if (theCategoria == null) {
-            throw new RuntimeException("Categoria non trovata con id " + categoriaId);
+    public ResponseEntity<CategoriaDTO> getCategoria(@PathVariable int categoriaId) {
+        try{
+            CategoriaDTO categoriaDTO = categoriaService.findById(categoriaId);
+            return ResponseEntity.ok(categoriaDTO);
         }
-        return theCategoria;
+        catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PostMapping
-    public Categoria addCategoria(@RequestBody Categoria theCategoria) {
-        // Imposto l'id a 0, così nel caso in cui venga passata una categoria con un id già esistente,
-        // non fa l'update di una categoria magari già esistente
-        theCategoria.setId(0);
-        Categoria dbCategoria = categoriaService.save(theCategoria);
-        return dbCategoria;
+    public ResponseEntity<CategoriaDTO> addCategoria(@RequestBody CategoriaDTO theCategoria) {
+        try {
+            CategoriaDTO categoriaDTO = categoriaService.save(theCategoria);
+            return ResponseEntity.ok(categoriaDTO);
+        }
+        catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
+    @PutMapping("/set_Product")
+    public ResponseEntity<CategoriaDTO> addProductToCategory(@RequestBody ProdottoDTO prodottoDTO,
+                                                             @RequestBody Categoria categoria) {
+        try {
+            CategoriaDTO categoriaDTO = categoriaService.addProduct(prodottoDTO, categoria);
+            return ResponseEntity.ok(categoriaDTO);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @PutMapping
-    public Categoria updateCategoria(@RequestBody Categoria theCategoria) {
-        Categoria dbCategoria = categoriaService.save(theCategoria);
-        return dbCategoria;
+    public ResponseEntity<CategoriaDTO> updateName(@RequestBody CategoriaDTO theCategoria, @RequestParam String name) {
+        try{
+            CategoriaDTO categoriaDTO = categoriaService.updateName(theCategoria, name);
+            return ResponseEntity.ok(categoriaDTO);
+        }
+        catch(Exception e){
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{categoriaId}")
-    public String deleteCategoria(@PathVariable int categoriaId) {
-        Categoria theCategoria = categoriaService.findById(categoriaId);
-        // Se non trova la categoria con l'id inserito
-        if (theCategoria == null) {
-            throw new RuntimeException("Categoria non trovata all'id " + categoriaId);
+    public ResponseEntity<Categoria> deleteCategory(@PathVariable int categoriaId) {
+        try{
+            categoriaService.deleteById(categoriaId);
+            return ResponseEntity.noContent().build();
         }
-        categoriaService.deleteById(categoriaId);
-        return "Categoria rimossa con id " + categoriaId;
+        catch (Exception e){
+            return ResponseEntity.notFound().build();
+        }
     }
 }

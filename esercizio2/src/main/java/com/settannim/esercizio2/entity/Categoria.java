@@ -3,6 +3,9 @@ package com.settannim.esercizio2.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "categoria")
 @Data
@@ -20,4 +23,9 @@ public class Categoria {
 
     @Column(name = "descrizione")
     private String descrizione;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @JoinColumn(name = "categorìa")
+    private Set<Prodotto> prodotti = new HashSet<>();
+
 }
